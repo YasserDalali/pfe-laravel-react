@@ -1,0 +1,390 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Scientific Publications Platform API",
+    "version": "1.0.0",
+    "description": "Simple API spec derived from cahierchrge.txt for managing researchers, teams, and publications with basic statistics."
+  },
+  "servers": [
+    { "url": "https://api.example.com" }
+  ],
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Logged in", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginResponse" } } } },
+          "401": { "description": "Invalid credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        },
+        "security": []
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "responses": {
+          "200": { "description": "Current user", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Researcher" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "responses": {
+          "204": { "description": "Logged out" },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+
+    "/researchers": {
+      "get": {
+        "summary": "List researchers",
+        "parameters": [
+          { "name": "teamId", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "List of researchers", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Researcher" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create researcher",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ResearcherCreate" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Researcher" } } } }
+        }
+      }
+    },
+    "/researchers/{id}": {
+      "get": {
+        "summary": "Get researcher",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Researcher", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Researcher" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      },
+      "patch": {
+        "summary": "Update researcher",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ResearcherUpdate" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Researcher" } } } }
+        }
+      },
+      "delete": {
+        "summary": "Delete researcher",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+
+    "/teams": {
+      "get": {
+        "summary": "List teams",
+        "responses": {
+          "200": { "description": "List of teams", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Team" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create team",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TeamCreate" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Team" } } } }
+        }
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "summary": "Get team",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Team", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Team" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      },
+      "patch": {
+        "summary": "Update team",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TeamUpdate" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Team" } } } }
+        }
+      },
+      "delete": {
+        "summary": "Delete team",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+    "/teams/{id}/publications": {
+      "get": {
+        "summary": "List team publications",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "recent", "in": "query", "schema": { "type": "boolean", "default": false } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": {
+          "200": { "description": "List of publications", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Publication" } } } } }
+        }
+      }
+    },
+
+    "/publications": {
+      "get": {
+        "summary": "List publications",
+        "parameters": [
+          { "name": "type", "in": "query", "schema": { "$ref": "#/components/schemas/PublicationType" } },
+          { "name": "year", "in": "query", "schema": { "type": "integer" } },
+          { "name": "teamId", "in": "query", "schema": { "type": "integer" } },
+          { "name": "researcherId", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "List of publications", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Publication" } } } } }
+        }
+      },
+      "post": {
+        "summary": "Create publication",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PublicationCreate" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Publication" } } } }
+        }
+      }
+    },
+    "/publications/{id}": {
+      "get": {
+        "summary": "Get publication",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Publication", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Publication" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      },
+      "patch": {
+        "summary": "Update publication",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PublicationUpdate" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Publication" } } } }
+        }
+      },
+      "delete": {
+        "summary": "Delete publication",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "204": { "description": "Deleted" } }
+      }
+    },
+
+    "/stats/publications-by-year": {
+      "get": {
+        "summary": "Publications count by year",
+        "parameters": [
+          { "name": "teamId", "in": "query", "schema": { "type": "integer" } },
+          { "name": "researcherId", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": { "description": "Counts by year", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StatsByYearItem" } } } } }
+        }
+      }
+    },
+    "/stats/publications-by-team": {
+      "get": {
+        "summary": "Publications count by team",
+        "responses": {
+          "200": { "description": "Counts by team", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StatsByGroupItem" } } } } }
+        }
+      }
+    },
+    "/stats/publications-by-researcher": {
+      "get": {
+        "summary": "Publications count by researcher",
+        "responses": {
+          "200": { "description": "Counts by researcher", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StatsByGroupItem" } } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "Researcher": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "grade": { "type": "string" },
+          "teamId": { "type": "integer" },
+          "role": { "type": "string", "enum": ["admin", "researcher"] }
+        },
+        "required": ["id", "name", "email", "grade", "role"]
+      },
+      "ResearcherCreate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" },
+          "grade": { "type": "string" },
+          "teamId": { "type": "integer" },
+          "role": { "type": "string", "enum": ["admin", "researcher"] }
+        },
+        "required": ["name", "email", "password", "grade", "role"]
+      },
+      "ResearcherUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" },
+          "grade": { "type": "string" },
+          "teamId": { "type": "integer" },
+          "role": { "type": "string", "enum": ["admin", "researcher"] }
+        }
+      },
+
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "leadId": { "type": "integer" },
+          "memberCount": { "type": "integer" }
+        },
+        "required": ["id", "name"]
+      },
+      "TeamCreate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "leadId": { "type": "integer" }
+        },
+        "required": ["name"]
+      },
+      "TeamUpdate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "leadId": { "type": "integer" }
+        }
+      },
+
+      "PublicationType": {
+        "type": "string",
+        "enum": ["conference", "article", "chapter"]
+      },
+      "Publication": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "year": { "type": "integer" },
+          "type": { "$ref": "#/components/schemas/PublicationType" },
+          "pdfUrl": { "type": "string", "format": "uri" },
+          "teamId": { "type": "integer" },
+          "researcherId": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["id", "title", "year", "type"]
+      },
+      "PublicationCreate": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "year": { "type": "integer" },
+          "type": { "$ref": "#/components/schemas/PublicationType" },
+          "pdfUrl": { "type": "string", "format": "uri" },
+          "teamId": { "type": "integer" },
+          "researcherId": { "type": "integer" }
+        },
+        "required": ["title", "year", "type"]
+      },
+      "PublicationUpdate": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "year": { "type": "integer" },
+          "type": { "$ref": "#/components/schemas/PublicationType" },
+          "pdfUrl": { "type": "string", "format": "uri" },
+          "teamId": { "type": "integer" },
+          "researcherId": { "type": "integer" }
+        }
+      },
+
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "user": { "$ref": "#/components/schemas/Researcher" }
+        },
+        "required": ["token", "user"]
+      },
+
+      "StatsByYearItem": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "integer" },
+          "count": { "type": "integer" }
+        },
+        "required": ["year", "count"]
+      },
+      "StatsByGroupItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "count": { "type": "integer" }
+        },
+        "required": ["id", "name", "count"]
+      },
+
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["message"]
+      }
+    }
+  }
+}
