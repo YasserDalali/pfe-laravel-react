@@ -241,119 +241,120 @@
       "Researcher": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "name": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "grade": { "type": "string" },
-          "teamId": { "type": "integer" },
-          "role": { "type": "string", "enum": ["admin", "researcher"] }
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Dr. Jane Doe" },
+          "email": { "type": "string", "format": "email", "example": "jane.doe@university.edu" },
+          "grade": { "type": "string", "example": "Professor" },
+          "teamId": { "type": "integer", "example": 101 },
+          "role": { "type": "string", "enum": ["admin", "researcher"], "example": "researcher" }
         },
         "required": ["id", "name", "email", "grade", "role"]
       },
       "ResearcherCreate": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "password": { "type": "string", "format": "password" },
-          "grade": { "type": "string" },
-          "teamId": { "type": "integer" },
-          "role": { "type": "string", "enum": ["admin", "researcher"] }
+          "name": { "type": "string", "example": "Dr. John Smith" },
+          "email": { "type": "string", "format": "email", "example": "john.smith@university.edu" },
+          "password": { "type": "string", "format": "password", "example": "securePassword123" },
+          "grade": { "type": "string", "example": "Associate Professor" },
+          "teamId": { "type": "integer", "example": 101 },
+          "role": { "type": "string", "enum": ["admin", "researcher"], "example": "researcher" }
         },
         "required": ["name", "email", "password", "grade", "role"]
       },
       "ResearcherUpdate": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "password": { "type": "string", "format": "password" },
-          "grade": { "type": "string" },
-          "teamId": { "type": "integer" },
-          "role": { "type": "string", "enum": ["admin", "researcher"] }
+          "name": { "type": "string", "example": "Dr. John Smith" },
+          "email": { "type": "string", "format": "email", "example": "john.smith@university.edu" },
+          "password": { "type": "string", "format": "password", "example": "newPassword456" },
+          "grade": { "type": "string", "example": "Professor" },
+          "teamId": { "type": "integer", "example": 102 },
+          "role": { "type": "string", "enum": ["admin", "researcher"], "example": "admin" }
         }
       },
 
       "Team": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "name": { "type": "string" },
-          "leadId": { "type": "integer" },
-          "memberCount": { "type": "integer" }
+          "id": { "type": "integer", "example": 101 },
+          "name": { "type": "string", "example": "AI Research Group" },
+          "leadId": { "type": "integer", "example": 1 },
+          "memberCount": { "type": "integer", "example": 5 }
         },
         "required": ["id", "name"]
       },
       "TeamCreate": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "leadId": { "type": "integer" }
+          "name": { "type": "string", "example": "Quantum Computing Lab" },
+          "leadId": { "type": "integer", "example": 2 }
         },
         "required": ["name"]
       },
       "TeamUpdate": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "leadId": { "type": "integer" }
+          "name": { "type": "string", "example": "Quantum Computing Laboratory" },
+          "leadId": { "type": "integer", "example": 3 }
         }
       },
 
       "PublicationType": {
         "type": "string",
-        "enum": ["conference", "article", "chapter"]
+        "enum": ["conference", "article", "chapter"],
+        "example": "article"
       },
       "Publication": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer" },
-          "title": { "type": "string" },
-          "year": { "type": "integer" },
+          "id": { "type": "integer", "example": 501 },
+          "title": { "type": "string", "example": "Advances in Neural Networks" },
+          "year": { "type": "integer", "example": 2024 },
           "type": { "$ref": "#/components/schemas/PublicationType" },
-          "pdfUrl": { "type": "string", "format": "uri" },
-          "teamId": { "type": "integer" },
-          "researcherId": { "type": "integer" },
-          "createdAt": { "type": "string", "format": "date-time" }
+          "pdfUrl": { "type": "string", "format": "uri", "example": "https://example.com/paper.pdf" },
+          "teamId": { "type": "integer", "example": 101 },
+          "researcherId": { "type": "integer", "example": 1 },
+          "createdAt": { "type": "string", "format": "date-time", "example": "2024-01-15T08:30:00Z" }
         },
         "required": ["id", "title", "year", "type"]
       },
       "PublicationCreate": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "year": { "type": "integer" },
+          "title": { "type": "string", "example": "New Algorithms for Data Mining" },
+          "year": { "type": "integer", "example": 2025 },
           "type": { "$ref": "#/components/schemas/PublicationType" },
-          "pdfUrl": { "type": "string", "format": "uri" },
-          "teamId": { "type": "integer" },
-          "researcherId": { "type": "integer" }
+          "pdfUrl": { "type": "string", "format": "uri", "example": "https://example.com/draft.pdf" },
+          "teamId": { "type": "integer", "example": 101 },
+          "researcherId": { "type": "integer", "example": 1 }
         },
         "required": ["title", "year", "type"]
       },
       "PublicationUpdate": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "year": { "type": "integer" },
+          "title": { "type": "string", "example": "Updated Title for Paper" },
+          "year": { "type": "integer", "example": 2025 },
           "type": { "$ref": "#/components/schemas/PublicationType" },
-          "pdfUrl": { "type": "string", "format": "uri" },
-          "teamId": { "type": "integer" },
-          "researcherId": { "type": "integer" }
+          "pdfUrl": { "type": "string", "format": "uri", "example": "https://example.com/final.pdf" },
+          "teamId": { "type": "integer", "example": 101 },
+          "researcherId": { "type": "integer", "example": 1 }
         }
       },
 
       "LoginRequest": {
         "type": "object",
         "properties": {
-          "email": { "type": "string", "format": "email" },
-          "password": { "type": "string", "format": "password" }
+          "email": { "type": "string", "format": "email", "example": "demo@example.com" },
+          "password": { "type": "string", "format": "password", "example": "password123" }
         },
         "required": ["email", "password"]
       },
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "token": { "type": "string" },
+          "token": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
           "user": { "$ref": "#/components/schemas/Researcher" }
         },
         "required": ["token", "user"]
