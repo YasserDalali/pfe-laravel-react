@@ -10,32 +10,30 @@ export const fetchTeams = createAsyncThunk('teams/fetch', async () => {
 
 export const fetchResearchers = createAsyncThunk('researchers/fetch', async () => {
   const client = getApiClient()
-  const res = await client.GET('/researchers')
+  const res = await client.GET('/researchers', { params: { query: {} } })
   return res.data ?? []
 })
+
 
 export const fetchPublications = createAsyncThunk('publications/fetch', async () => {
   const client = getApiClient()
-  const res = await client.GET('/publications')
+  const res = await client.GET('/publications', { params: { query: {} } })
   return res.data ?? []
 })
 
-export const fetchAnalyticsByYear = createAsyncThunk('analytics/year', async () => {
+export const fetchAnalytics = createAsyncThunk('analytics/fetch', async () => {
   const client = getApiClient()
-  const res = await client.GET('/stats/publications-by-year')
-  return res.data ?? []
-})
+  const [yearRes, teamRes, researcherRes] = await Promise.all([
+    client.GET('/stats/publications-by-year', { params: { query: {} } }),
+    client.GET('/stats/publications-by-team', { params: { query: {} } }),
+    client.GET('/stats/publications-by-researcher', { params: { query: {} } }),
+  ])
 
-export const fetchAnalyticsByTeam = createAsyncThunk('analytics/team', async () => {
-  const client = getApiClient()
-  const res = await client.GET('/stats/publications-by-team')
-  return res.data ?? []
-})
-
-export const fetchAnalyticsByResearcher = createAsyncThunk('analytics/researcher', async () => {
-  const client = getApiClient()
-  const res = await client.GET('/stats/publications-by-researcher')
-  return res.data ?? []
+  return {
+    byYear: yearRes.data ?? [],
+    byTeam: teamRes.data ?? [],
+    byResearcher: researcherRes.data ?? [],
+  }
 })
 
 const teamsSlice = createSlice({
@@ -113,23 +111,19 @@ const analyticsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAnalyticsByYear.pending, (state) => {
+      .addCase(fetchAnalytics.pending, (state) => {
         state.loading = true
         state.error = null
       })
-      .addCase(fetchAnalyticsByYear.fulfilled, (state, action) => {
-        state.byYear = action.payload
+      .addCase(fetchAnalytics.fulfilled, (state, action) => {
+        state.byYear = action.payload.byYear
+        state.byTeam = action.payload.byTeam
+        state.byResearcher = action.payload.byResearcher
         state.loading = false
       })
-      .addCase(fetchAnalyticsByYear.rejected, (state, action) => {
+      .addCase(fetchAnalytics.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message ?? 'Failed to load analytics'
-      })
-      .addCase(fetchAnalyticsByTeam.fulfilled, (state, action) => {
-        state.byTeam = action.payload
-      })
-      .addCase(fetchAnalyticsByResearcher.fulfilled, (state, action) => {
-        state.byResearcher = action.payload
       })
   },
 })

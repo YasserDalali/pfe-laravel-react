@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import type { RootState, AppDispatch } from '@/store'
-import { fetchAnalyticsByYear, fetchAnalyticsByTeam, fetchAnalyticsByResearcher } from '@/store'
+import { fetchAnalytics } from '@/store'
 import AppNavbar from '@/components/app-navbar'
 import { Card } from '@/components/ui/card'
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -18,9 +18,7 @@ export default function Analytics() {
 
   useEffect(() => {
     if (!user) return
-    dispatch(fetchAnalyticsByYear())
-    dispatch(fetchAnalyticsByTeam())
-    dispatch(fetchAnalyticsByResearcher())
+    dispatch(fetchAnalytics())
   }, [dispatch, user])
 
   if (!user) return null
