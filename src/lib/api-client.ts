@@ -28,9 +28,15 @@ export function getApiClient(): ApiClient {
     const baseUrl =  'http://localhost:3002'
     clientInstance = createClient<paths>({
       baseUrl,
-      headers: () => {
+    })
+
+    clientInstance.use({
+      onRequest: ({ request }) => {
         const token = getToken()
-        return token ? { Authorization: `Bearer ${token}` } : {}
+        if (token) {
+          request.headers.set('Authorization', `Bearer ${token}`)
+        }
+        return request
       },
     })
   }
