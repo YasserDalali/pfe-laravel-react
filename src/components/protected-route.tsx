@@ -3,7 +3,7 @@ import { getAuthUser } from '@/lib/auth';
 
 /**
  * A wrapper component for protected routes.
- * Checks if the user is authenticated (has a valid user object in localStorage).
+ * Checks if the user is authenticated (has a valid user object in localStorage car mafiya man9ad redis o JWT o l7ala).
  * If authenticated, renders the child routes (Outlet).
  * If not, redirects to the login page.
  */

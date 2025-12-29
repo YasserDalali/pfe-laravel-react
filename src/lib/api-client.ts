@@ -25,7 +25,7 @@ function getToken(): string | null {
  */
 export function getApiClient(): ApiClient {
   if (!clientInstance) {
-    const baseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:3002'
+    const baseUrl =  'http://localhost:3002'
     clientInstance = createClient<paths>({
       baseUrl,
       headers: () => {
